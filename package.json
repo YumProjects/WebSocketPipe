@@ -1,0 +1,14 @@
+{
+  "name": "websocketpipe",
+  "version": "1.0.0",
+  "description": "A websocket proxy for robots.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "author": "Ben Hess",
+  "license": "ISC",
+  "dependencies": {
+    "ws": "^7.4.2"
+  }
+}
