@@ -4,7 +4,8 @@
   "description": "A websocket proxy for robots.",
   "main": "index.js",
   "scripts": {
-    "test": "node index.js"
+    "test": "node index.js",
+    "start": "node index.js"
   },
   "author": "Ben Hess",
   "license": "ISC",
