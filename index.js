@@ -1,5 +1,17 @@
 const WebSocket = require("ws");
 const readline = require("readline");
+const Validation = require("ws/lib/validation");
+
+function tryCloseWs(ws, code, reason){
+    if(ws.readyState != WebSocket.CLOSED && ws.readyState != WebSocket.CLOSING){
+        if(Validation.isValidStatusCode(code)){
+            ws.close(code, reason);
+        }
+        else{
+            ws.close();
+        }
+    }
+}
 
 function run(port, outgoingHost){
     var server = new WebSocket.Server({ port: port });
@@ -36,11 +48,9 @@ function run(port, outgoingHost){
             incomingWs.send(message);
         });
 
-        outgoingWs.on("close", function(){
-            console.log("Outgoing disconnected.");
-            if(incomingWs.readyState != WebSocket.CLOSED && incomingWs.readyState != WebSocket.CLOSING){
-                incomingWs.close();
-            }
+        outgoingWs.on("close", function(code, reason){
+            console.log("Outgoing disconnected. (%s '%s')", code, reason);
+            tryCloseWs(incomingWs, code, reason);
         });
 
         outgoingWs.on("error", function(err){
@@ -56,13 +66,11 @@ function run(port, outgoingHost){
                 // If outgoing isn't connected yet than queue it
                 outgoingQueue.push(message);
             }
-        })
-    
-        incomingWs.on("close", function(){
-            console.log("Incoming disconnected.");
-            if(outgoingWs.readyState != WebSocket.CLOSED && outgoingWs.readyState != WebSocket.CLOSING){
-                outgoingWs.close();
-            }
+        });
+
+        incomingWs.on("close", function(code, reason){
+            console.log("Incoming disconnected. (%s '%s')", code, reason);
+            tryCloseWs(outgoingWs, code, reason);
         });
 
         incomingWs.on("error", function(err){
