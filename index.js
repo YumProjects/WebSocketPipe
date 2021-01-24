@@ -71,7 +71,9 @@ function run(port, outgoingHost){
         });
     });
     
-    console.log("Listening...");
+    server.on("listening", function(){
+        console.log("Listening...");
+    });
 }
 
 const rl = readline.createInterface({
